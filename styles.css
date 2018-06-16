@@ -1,0 +1,51 @@
+.game__body svg {
+  width: 800px;
+  fill: deeppink;
+}
+
+.controls {
+  position: absolute;
+  top: 667px;
+  left: 308px;
+}
+
+.controls__button {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: yellow;
+}
+
+.controls__button:nth-child(2) {
+  top: 20px;
+  left: 79px;
+}
+
+.controls__button:nth-child(3) {
+  left: 158px;
+}
+
+.game__screen {
+  position: absolute;
+  top: 308px;
+  left: 268px;
+  background: #efefef;
+  width: 280px;
+  height: 280px;
+  border-radius: 16px;
+}
+
+.game__screen canvas {
+  position: absolute;
+}
+
+.background {
+  width: 100%;
+  height: 100%;
+}
+
+.animation {
+  bottom: 4%;
+  left: 20%;
+}
