@@ -14,7 +14,7 @@ class Egg {
     this.bounce = this.bounce.bind(this);
   }
 
-  bounce() {
+  bounce(maxBounce) {
     const {
       frameCount,
       frameWidth,
@@ -24,9 +24,8 @@ class Egg {
     } = this.sprite;
 
     var bounce = 0;
-    var maxBounce = 3;
 
-    var animate = () => {
+    return (resolve) => {
       context.clearRect(0, 0, frameWidth, height);
       context.drawImage(image, this.currentFrame * frameWidth, 0, frameWidth, height, 0, 0, frameWidth, height);
 
@@ -40,17 +39,15 @@ class Egg {
       }
 
       if (bounce == maxBounce) {
-        return;
+        resolve();
+        return true;
       }
 
       this.currentFrame += this.increment;
-      setTimeout(() => requestAnimationFrame(animate), 500);
-    }
-
-    animate();
+    };
   }
 
-  hatch() {
+  hatch(resolve) {
     const {
       frameCount,
       frameWidth,
@@ -59,22 +56,21 @@ class Egg {
       startFrame,
     } = this.sprite;
 
-    var animate = () => {
+    return (resolve) => {
       context.clearRect(0, 0, frameWidth, height);
       context.drawImage(image, this.currentFrame * frameWidth, 0, frameWidth, height, 0, 0, frameWidth, height);
 
       if (this.currentFrame === 0) {
-        return;
+        resolve();
+        return true;
       }
 
       this.currentFrame--;
-      setTimeout(() => requestAnimationFrame(animate), 500);
-    }
-
-    animate();
+    };
   }
 }
 
+var { animate } = new Animation();
 var egg = new Egg();
 // Get canvas
 var canvas = document.querySelector('.animation');
@@ -84,6 +80,7 @@ var context = canvas.getContext('2d');
 var chooseButton = document.querySelector('.choose');
 
 chooseButton.addEventListener('click', () => {
-  egg.bounce();
-  egg.hatch();
+  animate(egg.bounce(3)).then(() => {
+    animate(egg.hatch())
+  });
 });
