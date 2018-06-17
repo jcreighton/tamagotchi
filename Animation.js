@@ -1,8 +1,4 @@
 class Animation {
-  constructor() {
-
-  }
-
   animate(draw) {
     return new Promise((resolve, reject) => {
       var animation = () => {
@@ -16,9 +12,5 @@ class Animation {
 
       requestAnimationFrame(animation);
     });
-  }
-
-  clear() {
-    /* noop */
   }
 }

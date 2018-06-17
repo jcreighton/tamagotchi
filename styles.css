@@ -46,6 +46,8 @@
 }
 
 .animation {
+  left: 0;
+  right: 0;
   bottom: 4%;
-  left: 20%;
+  margin: 0 auto;
 }
