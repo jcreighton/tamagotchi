@@ -1,24 +1,25 @@
-var { animate } = new Animation();
-var egg = new Egg();
-var tamagotchi = new Tamagotchi();
 // Get canvas
 var canvas = document.querySelector('.animation');
-canvas.width = 180;
+canvas.width = 280;
 canvas.height = 120;
 var context = canvas.getContext('2d');
+
+var { animate, clear } = new Animation(canvas);
+var egg = new Egg();
+var tamagotchi = new Tamagotchi();
+
 var chooseButton = document.querySelector('.choose');
 
 chooseButton.addEventListener('click', () => {
-  animate(egg.bounce(3))
+  egg.bounce(3)
     .then(() => {
       console.log('Bouncing complete!');
       console.log('Time to hatch!');
-      return animate(egg.hatch());
+      return egg.hatch();
     }).then(() => {
-      egg.clear();
-      canvas.width = tamagotchi.sprite.frameHeight;
-      canvas.height = tamagotchi.sprite.frameWidth;
+      clear();
+      canvas.height = tamagotchi.sprite.frameHeight;
       console.log('BABY TAMAGOTCHI!')
-      animate(tamagotchi.bounce());
-    });
+      return tamagotchi.bounce();
+    }).then(tamagotchi.moveRight).then(tamagotchi.moveLeft);
 });

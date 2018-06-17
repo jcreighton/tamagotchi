@@ -11,22 +11,21 @@ class Tamagotchi {
     this.sprite.frameWidth = this.sprite.width / this.sprite.columns;
     this.sprite.frameHeight = this.sprite.height / this.sprite.rows;
 
-    this.sprite.dislike = 0;
-    this.sprite.jump = 1;
-    this.sprite.eat = 2;
-    this.sprite.chill = 3;
+    this.animation = {};
+    this.animation.dislike = 0;
+    this.animation.jump = 1;
+    this.animation.eat = 2;
+    this.animation.bounce = 3;
+    this.animation.move = 3;
+
+    this.ms = 300;
 
     this.eat = 0;
     this.maxEat = 10;
-  }
 
-  clear() {
-    const {
-      frameWidth,
-      frameHeight,
-    } = this.sprite;
-
-    context.clearRect(0, 0, frameWidth, frameHeight);
+    this.moveRight = this.move.bind(this, 'right');
+    this.moveLeft = this.move.bind(this, 'left');
+    this.bounce = this.bounce.bind(this);
   }
 
   dislike() {
@@ -41,23 +40,60 @@ class Tamagotchi {
 
   }
 
-  bounce() {
+  move(direction = 'right') {
     const {
-      chill,
       image,
       frameCount,
       frameHeight,
       frameWidth,
     } = this.sprite;
 
+    const {
+      animation,
+    } = this;
+
+    var moveTo = {
+      right: 1,
+      left: -1,
+    };
+
+    var positionX = 80;
+    var increment = moveTo[direction];
+    var maxMove = 40;
+    var boundaryX = positionX + (maxMove * increment);
+    var currentFrame = 0;
+
+    return animate((resolve) => {
+      context.drawImage(image, currentFrame, animation.move * frameHeight, frameWidth, frameHeight, positionX, 0, frameWidth, frameHeight);
+
+      if (positionX === boundaryX) {
+        resolve();
+        return true;
+      }
+
+      positionX += increment;
+    }, 0);
+  }
+
+  bounce() {
+    const {
+      image,
+      frameCount,
+      frameHeight,
+      frameWidth,
+    } = this.sprite;
+
+    const {
+      animation,
+    } = this;
+
     var bounce = 0;
     var maxBounce = 2;
     var increment = 1;
     var currentFrame = 0;
 
-    return (resolve) => {
-      this.clear();
-      context.drawImage(image, currentFrame * frameWidth, chill * frameHeight, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight);
+    return animate((resolve) => {
+      context.drawImage(image, currentFrame * frameWidth, animation.bounce * frameHeight, frameWidth, frameHeight, 80, 0, frameWidth, frameHeight);
 
       if (currentFrame === frameCount - 1) {
         increment = -1;
@@ -68,21 +104,12 @@ class Tamagotchi {
         bounce++;
       }
 
-      if (bounce == maxBounce) {
+      if (bounce === maxBounce) {
         resolve();
         return true;
       }
 
       currentFrame += increment;
-    };
-
-
-    // return (resolve) => {
-      // goes up & down
-      // moves left
-      // goes up & down
-      // moves right
-      // repeat
-    // };
+    }, this.ms);
   }
 }

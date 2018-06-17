@@ -10,18 +10,8 @@ class Egg {
     this.sprite.frameWidth = this.sprite.width / this.sprite.frameCount;
     this.sprite.startFrame = 2;
 
-    this.clear = this.clear.bind(this);
     this.bounce = this.bounce.bind(this);
     this.hatch = this.hatch.bind(this);
-  }
-
-  clear() {
-    const {
-      frameWidth,
-      frameHeight,
-    } = this.sprite;
-
-    context.clearRect(0, 0, frameWidth, frameHeight);
   }
 
   bounce(maxBounce) {
@@ -37,8 +27,7 @@ class Egg {
     var increment = 1;
     var currentFrame = 2
 
-    return (resolve) => {
-      this.clear();
+    return animate((resolve) => {
       context.drawImage(image, currentFrame * frameWidth, 0, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight);
 
       if (currentFrame === frameCount - 1) {
@@ -56,7 +45,7 @@ class Egg {
       }
 
       currentFrame += increment;
-    };
+    });
   }
 
   hatch() {
@@ -70,8 +59,7 @@ class Egg {
 
     var currentFrame = 2
 
-    return (resolve) => {
-      this.clear();
+    return animate((resolve) => {
       context.drawImage(image, currentFrame * frameWidth, 0, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight);
 
       if (currentFrame === 0) {
@@ -80,6 +68,6 @@ class Egg {
       }
 
       currentFrame--;
-    };
+    });
   }
 }
