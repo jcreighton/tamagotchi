@@ -9,10 +9,10 @@ class Animation {
   animate(draw, ms = 500) {
     return new Promise((resolve, reject) => {
       var animation = () => {
-
         this.clear();
+
         var isComplete = draw(resolve);
-        console.log('is complete?  ', isComplete);
+
         if (!isComplete) {
           setTimeout(() => requestAnimationFrame(animation), ms);
         }

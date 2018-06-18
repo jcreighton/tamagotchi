@@ -1,14 +1,19 @@
 class Egg {
   constructor() {
-    this.sprite = {};
-    this.sprite.image = new Image();
+    this.sprite = {
+      image: new Image(),
+      height: 120,
+      width: 900,
+      frameCount: 5,
+      frameHeight: 120,
+      startFrame: 2,
+    };
+
     this.sprite.image.src = 'images/EggSprite.png';
-    this.sprite.height = 120;
-    this.sprite.width = 900;
-    this.sprite.frameCount = 5;
-    this.sprite.frameHeight = 120;
+
     this.sprite.frameWidth = this.sprite.width / this.sprite.frameCount;
-    this.sprite.startFrame = 2;
+
+    this.positionX = (canvas.width / 2) - (this.sprite.frameWidth / 2);
 
     this.bounce = this.bounce.bind(this);
     this.hatch = this.hatch.bind(this);
@@ -28,7 +33,7 @@ class Egg {
     var currentFrame = 2
 
     return animate((resolve) => {
-      context.drawImage(image, currentFrame * frameWidth, 0, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight);
+      context.drawImage(image, currentFrame * frameWidth, 0, frameWidth, frameHeight, this.positionX, 0, frameWidth, frameHeight);
 
       if (currentFrame === frameCount - 1) {
         increment = -1;
@@ -60,7 +65,7 @@ class Egg {
     var currentFrame = 2
 
     return animate((resolve) => {
-      context.drawImage(image, currentFrame * frameWidth, 0, frameWidth, frameHeight, 0, 0, frameWidth, frameHeight);
+      context.drawImage(image, currentFrame * frameWidth, 0, frameWidth, frameHeight, this.positionX, 0, frameWidth, frameHeight);
 
       if (currentFrame === 0) {
         resolve();

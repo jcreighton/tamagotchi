@@ -5,21 +5,80 @@ canvas.height = 120;
 var context = canvas.getContext('2d');
 
 var { animate, clear } = new Animation(canvas);
-var egg = new Egg();
-var tamagotchi = new Tamagotchi();
+var egg = new Egg(canvas);
+var tamagotchi = new Tamagotchi(canvas);
 
-var chooseButton = document.querySelector('.choose');
+var buttonA = document.querySelector('.a');
+var buttonB = document.querySelector('.b');
+var buttonC = document.querySelector('.c');
 
-chooseButton.addEventListener('click', () => {
-  egg.bounce(3)
-    .then(() => {
-      console.log('Bouncing complete!');
-      console.log('Time to hatch!');
-      return egg.hatch();
-    }).then(() => {
-      clear();
-      canvas.height = tamagotchi.sprite.frameHeight;
-      console.log('BABY TAMAGOTCHI!')
-      return tamagotchi.bounce();
-    }).then(tamagotchi.moveRight).then(tamagotchi.moveLeft);
+var pendingActions = [];
+var time;
+var timeActionHandled;
+
+function handleAction() {
+  var action = pendingActions.shift();
+  console.log('OKAY, I WILL FEED THE TAMAGOTCHI');
+  timeActionHandled = Date.now();
+  console.log(time, timeActionHandled);
+  action().then(loop);
+}
+
+function loop() {
+  if (pendingActions.length) {
+    handleAction();
+    return;
+  }
+
+  return tamagotchi.idle().then(() => {
+    loop();
+  });
+}
+
+function feed() {
+  return tamagotchi.eat();
+}
+
+buttonA.addEventListener('click', () => {
+  console.log('FEED TAMAGOTCHI!');
+  time = Date.now();
+  pendingActions.push(feed);
 });
+buttonB.addEventListener('click', loop);
+
+
+  // tamagotchi.moveRight()
+  //   .then(tamagotchi.eat)
+  //   .then(tamagotchi.jump);
+  // egg.bounce(3)
+  //   .then(() => {
+  //     console.log('Bouncing complete!');
+  //     console.log('Time to hatch!');
+  //     return egg.hatch();
+  //   }).then(() => {
+  //     clear();
+  //     canvas.height = tamagotchi.sprite.frameHeight;
+  //     console.log('BABY TAMAGOTCHI!')
+  //     return tamagotchi.bounce();
+  //   })
+  //   .then(tamagotchi.moveRight)
+  //   .then(tamagotchi.moveLeft)
+  //   .then(tamagotchi.bounce);
+
+
+
+class Game {
+  constructor() {
+
+  }
+
+  start() {
+    // New egg
+    // Hatch
+    // Start loop
+  }
+
+  loop() {
+
+  }
+}
