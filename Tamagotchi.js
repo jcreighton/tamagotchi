@@ -39,14 +39,18 @@ class Tamagotchi {
   }
 
   idle() {
-    return this.bounce()
-      .then(this.moveRight)
-      .then(this.moveRight)
-      .then(this.moveLeft)
-      .then(this.moveLeft)
-      .then(this.moveLeft)
-      .then(this.bounce)
-      .then(this.moveRight)
+    const animation = function* () {
+      yield this.bounce();
+      yield this.moveRight();
+      yield this.moveRight();
+      yield this.moveLeft();
+      yield this.moveLeft();
+      yield this.moveLeft();
+      yield this.bounce();
+      yield this.moveRight();
+    };
+
+    return animation.bind(this)();
   }
 
   feed() {

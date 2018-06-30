@@ -22,17 +22,20 @@ function handleAction() {
   const date = new Date(Date.now());
   timeActionHandled = date.getSeconds();
   console.log((timeActionHandled - time) + ' seconds');
-  action().then(loop);
+  // Kick off coroutine
+  action().then(() => coroutine(loop));
 }
 
 function* loop() {
-  if (pendingActions.length) {
-    return handleAction();
+  while (pendingActions.length <= 0) {
+    yield* tamagotchi.idle();
   }
 
-  return tamagotchi.idle().then(() => {
-    loop();
-  });
+  return handleAction();
+}
+
+function startLoop() {
+  return coroutine(loop);
 }
 
 function feed() {
@@ -46,7 +49,7 @@ buttonA.addEventListener('click', () => {
   pendingActions.push(feed);
 });
 
-buttonB.addEventListener('click', loop);
+buttonB.addEventListener('click', startLoop);
 
 
   // tamagotchi.moveRight()
