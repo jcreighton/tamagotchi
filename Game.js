@@ -19,15 +19,15 @@ var timeActionHandled;
 function handleAction() {
   var action = pendingActions.shift();
   console.log('OKAY, I WILL FEED THE TAMAGOTCHI');
-  timeActionHandled = Date.now();
-  console.log(time, timeActionHandled);
+  const date = new Date(Date.now());
+  timeActionHandled = date.getSeconds();
+  console.log((timeActionHandled - time) + ' seconds');
   action().then(loop);
 }
 
-function loop() {
+function* loop() {
   if (pendingActions.length) {
-    handleAction();
-    return;
+    return handleAction();
   }
 
   return tamagotchi.idle().then(() => {
@@ -41,9 +41,11 @@ function feed() {
 
 buttonA.addEventListener('click', () => {
   console.log('FEED TAMAGOTCHI!');
-  time = Date.now();
+  const date = new Date(Date.now());
+  time = date.getSeconds();
   pendingActions.push(feed);
 });
+
 buttonB.addEventListener('click', loop);
 
 
