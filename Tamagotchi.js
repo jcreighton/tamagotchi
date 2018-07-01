@@ -29,12 +29,13 @@ class Tamagotchi {
     this.positionY = 0;
     this.ms = 300;
 
-    this.eatCount = 0;
-    this.maxEat = 10;
+    this.eatLevel = 0;
+    this.maxEatLevel = 3;
 
     this.reset = this.reset.bind(this);
     this.drawFrame = this.drawFrame.bind(this);
     this.idle = this.idle.bind(this);
+    this.feed = this.feed.bind(this);
     this.dislike = this.dislike.bind(this);
     this.eat = this.eat.bind(this);
     this.jump = this.jump.bind(this);
@@ -83,9 +84,25 @@ class Tamagotchi {
   }
 
   feed() {
-    // Check if eatCount === maxEat
-    // If not, eat()
-    // If yes, dislike()
+    var {
+      eatLevel,
+      maxEatLevel,
+    } = this;
+    console.log('EATEN: ', this.eatLevel);
+    if (this.eatLevel === maxEatLevel) {
+      return dislike.bind(this);
+    }
+
+    eatLevel += 1;
+    return eat.bind(this);
+
+    function* eat() {
+      yield* this.eat(3);
+    };
+
+    function* dislike() {
+      yield* this.eat(3);
+    };
   }
 
   dislike() {
@@ -100,13 +117,16 @@ class Tamagotchi {
     );
   }
 
-  eat() {
+  eat(max) {
     const { drawFrame } = this;
 
     return animateWithGenerator(
       function* () {
-        yield drawFrame('eat', 0);
-        yield drawFrame('eat', 1);
+        while (max > 0) {
+          yield drawFrame('eat', 0);
+          yield drawFrame('eat', 1);
+          max--;
+        }
       },
       this.ms
     );

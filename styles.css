@@ -49,14 +49,42 @@
   position: absolute;
 }
 
+.game__options {
+  display: none;
+  position: absolute;
+  background: #efefef;
+  width: 280px;
+  height: 280px;
+  border-radius: 16px;
+}
+
+.game__options.visible {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.game__options > div {
+  color: #666;
+  font-family: 'VT323';
+  font-size: 80px;
+  cursor: pointer;
+}
+
+.game__options > div:hover {
+  color: #444;
+}
+
+.game__options > div:hover:before {
+  content: '>';
+}
+
 .background {
   width: 100%;
   height: 100%;
 }
 
 .animation {
-/*  left: 0;
-  right: 0;*/
   bottom: 4%;
-  /*margin: 0 auto;*/
 }
