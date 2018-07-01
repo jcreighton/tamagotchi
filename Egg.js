@@ -5,74 +5,75 @@ class Egg {
       height: 120,
       width: 900,
       frameCount: 5,
-      frameHeight: 120,
-      startFrame: 2,
     };
 
     this.sprite.image.src = 'images/EggSprite.png';
 
     this.sprite.frameWidth = this.sprite.width / this.sprite.frameCount;
+    this.sprite.frameHeight = 120;
 
     this.positionX = (canvas.width / 2) - (this.sprite.frameWidth / 2);
+    this.positionY = 0;
+    this.ms = 500;
 
+    this.drawFrame = this.drawFrame.bind(this);
     this.bounce = this.bounce.bind(this);
+    this.break = this.break.bind(this);
     this.hatch = this.hatch.bind(this);
   }
 
-  bounce(maxBounce) {
+  drawFrame(frame, positionX = this.positionX, positionY = this.positionY) {
     const {
-      frameCount,
-      frameWidth,
-      frameHeight,
       image,
-      startFrame,
+      frameCount,
+      frameHeight,
+      frameWidth,
     } = this.sprite;
 
-    var bounce = 0;
-    var increment = 1;
-    var currentFrame = 2
+    return () => context.drawImage(image,
+      frame * frameWidth, 0,
+      frameWidth, frameHeight,
+      positionX, positionY,
+      frameWidth, frameHeight);
+  }
 
-    return animate((resolve) => {
-      context.drawImage(image, currentFrame * frameWidth, 0, frameWidth, frameHeight, this.positionX, 0, frameWidth, frameHeight);
+  bounce(max) {
+    const { drawFrame } = this;
 
-      if (currentFrame === frameCount - 1) {
-        increment = -1;
-      }
+    return animateWithGenerator(
+      function* () {
+        while (max > 0) {
+          yield drawFrame(2);
+          yield drawFrame(3);
+          yield drawFrame(4);
+          yield drawFrame(3);
+          yield drawFrame(2);
+          max--;
+        }
+      },
+      this.ms
+    );
+  }
 
-      if (currentFrame === startFrame) {
-        increment = 1;
-        bounce++;
-      }
+  break() {
+    const { drawFrame } = this;
 
-      if (bounce == maxBounce) {
-        resolve();
-        return true;
-      }
-
-      currentFrame += increment;
-    });
+    return animateWithGenerator(
+      function* () {
+        yield drawFrame(2);
+        yield drawFrame(1);
+        yield drawFrame(0);
+      },
+      this.ms
+    );
   }
 
   hatch() {
-    const {
-      frameCount,
-      frameWidth,
-      frameHeight,
-      image,
-      startFrame,
-    } = this.sprite;
+    function* animation() {
+      yield* this.bounce(3);
+      yield* this.break();
+    };
 
-    var currentFrame = 2
-
-    return animate((resolve) => {
-      context.drawImage(image, currentFrame * frameWidth, 0, frameWidth, frameHeight, this.positionX, 0, frameWidth, frameHeight);
-
-      if (currentFrame === 0) {
-        resolve();
-        return true;
-      }
-
-      currentFrame--;
-    });
+    return animation.bind(this);
   }
 }

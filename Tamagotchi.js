@@ -33,7 +33,7 @@ class Tamagotchi {
     this.maxEat = 10;
 
     this.reset = this.reset.bind(this);
-    this.draw = this.draw.bind(this);
+    this.drawFrame = this.drawFrame.bind(this);
     this.idle = this.idle.bind(this);
     this.dislike = this.dislike.bind(this);
     this.eat = this.eat.bind(this);
@@ -48,7 +48,7 @@ class Tamagotchi {
     this.positionY = this.initialPositionY;
   }
 
-  draw(action, currentFrame, positionX = this.positionX, positionY = this.positionY) {
+  drawFrame(action, frame, positionX = this.positionX, positionY = this.positionY) {
     const {
       image,
       frameCount,
@@ -61,7 +61,7 @@ class Tamagotchi {
     } = this;
 
     return () => context.drawImage(image,
-      currentFrame * frameWidth, animation[action] * frameHeight,
+      frame * frameWidth, animation[action] * frameHeight,
       frameWidth, frameHeight,
       positionX, positionY,
       frameWidth, frameHeight);
@@ -208,37 +208,17 @@ class Tamagotchi {
   }
 
   bounce() {
-    const { draw } = this;
+    const { drawFrame } = this;
 
     return animateWithGenerator(
       function* () {
-        yield draw('bounce', 0);
-        yield draw('bounce', 1);
-        yield draw('bounce', 2);
-        yield draw('bounce', 1);
-        yield draw('bounce', 0);
+        yield drawFrame('bounce', 0);
+        yield drawFrame('bounce', 1);
+        yield drawFrame('bounce', 2);
+        yield drawFrame('bounce', 1);
+        yield drawFrame('bounce', 0);
       },
       this.ms
     );
-
-    // return animate((resolve) => {
-    //   context.drawImage(image, currentFrame * frameWidth, animation.bounce * frameHeight, frameWidth, frameHeight, this.positionX, 0, frameWidth, frameHeight);
-
-    //   if (currentFrame === frameCount - 1) {
-    //     increment = -1;
-    //   }
-
-    //   if (currentFrame === 0) {
-    //     increment = 1;
-    //     bounce++;
-    //   }
-
-    //   if (bounce === maxBounce) {
-    //     resolve();
-    //     return true;
-    //   }
-
-    //   currentFrame += increment;
-    // }, this.ms);
   }
 }

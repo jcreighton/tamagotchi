@@ -1,12 +1,28 @@
-// Get canvas
 var canvas = document.querySelector('.animation');
 canvas.width = 280;
 canvas.height = 120;
 var context = canvas.getContext('2d');
 
+class Game {
+  constructor() {
+    this.started = false;
+  }
+
+  start() {
+    this.started = true;
+    coroutine(egg.hatch());
+    // Start loop
+  }
+
+  loop() {
+
+  }
+}
+
 var { animate, animateWithGenerator, clear, generate } = new Animation(canvas);
 var egg = new Egg(canvas);
 var tamagotchi = new Tamagotchi(canvas);
+var game = new Game();
 
 var buttonA = document.querySelector('.a');
 var buttonB = document.querySelector('.b');
@@ -16,18 +32,8 @@ var pendingActions = [];
 var time;
 var timeActionHandled;
 
-// function handleAction() {
-//   var action = pendingActions.shift();
-//   console.log('OKAY, I WILL FEED THE TAMAGOTCHI');
-//   const date = new Date(Date.now());
-//   timeActionHandled = date.getSeconds();
-//   console.log((timeActionHandled - time) + ' seconds');
-//   // Kick off coroutine
-//   action().then(() => coroutine(loop));
-// }
-
 function* loop() {
-  while (true) { // While game is active
+  while (game.started) {
     if (isPending()) {
       const action = pendingActions.shift();
       yield tamagotchi.reset;
@@ -45,7 +51,11 @@ function isPending() {
 }
 
 function startLoop() {
-  coroutine(loop);
+  if (!game.started) {
+    game.start();
+    coroutine(loop);
+  }
+
 }
 
 function feed() {
@@ -59,7 +69,7 @@ buttonA.addEventListener('click', () => {
   pendingActions.push(feed);
 });
 
-buttonB.addEventListener('click', startLoop);
+buttonB.addEventListener('click', game.start);
 
 
   // tamagotchi.moveRight()
@@ -79,21 +89,3 @@ buttonB.addEventListener('click', startLoop);
   //   .then(tamagotchi.moveRight)
   //   .then(tamagotchi.moveLeft)
   //   .then(tamagotchi.bounce);
-
-
-
-class Game {
-  constructor() {
-
-  }
-
-  start() {
-    // New egg
-    // Hatch
-    // Start loop
-  }
-
-  loop() {
-
-  }
-}
