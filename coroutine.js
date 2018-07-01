@@ -1,14 +1,15 @@
-const coroutine = function(generatorFunction) {
+const coroutine = function(generatorFunction, pause) {
   const generator = generatorFunction();
+  console.log(generator);
   next();
 
   // Call next() or throw() on the generator as necessary
   function next(value, isError) {
     const response = isError ?
       generator.throw(value) : generator.next(value);
-
-    if (response.done) {
-      return;
+      console.log(generator, response, pause());
+    if (response.done || pause()) {
+      return generator.return();
     }
 
     handleAsync(response.value);
@@ -18,11 +19,15 @@ const coroutine = function(generatorFunction) {
   function handleAsync(async) {
     if (async && async.then) {
       handlePromise(async);
-    } else if ('GeneratorFunction' === async.constructor.name) {
+    } else if ((async && async.constructor && async.constructor.name) === 'GeneratorFunction') {
       handleThunk(async);
     } else if (typeof async === 'function') {
-      // console.log('async');
-      handleAsync(async());
+      console.log('async', async);
+      // const generate = function* () {
+      //   yield async();
+      // }
+
+      // handleAsync(generate());
     } else if (async === undefined) {
       // console.log('timeout');
       setTimeout(next, 0);
@@ -34,12 +39,12 @@ const coroutine = function(generatorFunction) {
 
   // If the generator yielded a promise, call `.then()`
   function handlePromise(async) {
-    // console.log('promise');
+    console.log('promise');
     async.then(next, (error) => next(error, true));
   }
   // If the generator yielded a thunk, call it
   function handleThunk(async) {
-    // console.log('thunk');
+    console.log('thunk', async);
     async((error, v) => {
       error ? next(error, true) : next(v);
     });

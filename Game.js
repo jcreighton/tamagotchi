@@ -16,26 +16,34 @@ var pendingActions = [];
 var time;
 var timeActionHandled;
 
-function handleAction() {
-  var action = pendingActions.shift();
-  console.log('OKAY, I WILL FEED THE TAMAGOTCHI');
-  const date = new Date(Date.now());
-  timeActionHandled = date.getSeconds();
-  console.log((timeActionHandled - time) + ' seconds');
-  // Kick off coroutine
-  action().then(() => coroutine(loop));
-}
+// function handleAction() {
+//   var action = pendingActions.shift();
+//   console.log('OKAY, I WILL FEED THE TAMAGOTCHI');
+//   const date = new Date(Date.now());
+//   timeActionHandled = date.getSeconds();
+//   console.log((timeActionHandled - time) + ' seconds');
+//   // Kick off coroutine
+//   action().then(() => coroutine(loop));
+// }
 
 function* loop() {
-  while (pendingActions.length <= 0) {
-    yield* tamagotchi.idle();
-  }
+  while (true) {
+    if (isPending()) {
+      var action = pendingActions.shift();
+      yield action();
+    }
 
-  return handleAction();
+    const idle = tamagotchi.idle();
+    yield* idle(isPending); // How do we pause this?
+  }
+}
+
+function isPending() {
+  return pendingActions.length;
 }
 
 function startLoop() {
-  return coroutine(loop);
+  coroutine(loop, isPending);
 }
 
 function feed() {
