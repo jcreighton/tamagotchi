@@ -3,7 +3,42 @@ class Animation {
     this.canvas = canvas;
 
     this.animate = this.animate.bind(this);
+    this.animateWithGenerator = this.animateWithGenerator.bind(this);
     this.clear = this.clear.bind(this);
+  }
+
+  animateWithGenerator(animFunc, ms = 500) {
+    const animate = animFunc();
+    let done = false;
+
+    const promise = (draw) => {
+      return new Promise((resolve, reject) => {
+
+        const animation = () => {
+          this.clear();
+          draw();
+          resolve();
+        }
+
+        setTimeout(() => {
+          requestAnimationFrame(animation);
+        }, ms);
+      });
+    }
+
+    function* animationLoop() {
+      while (true) {
+        const next = animate.next();
+
+        if (next.done) {
+          return;
+        }
+
+        yield promise(next.value);
+      }
+    }
+
+    return animationLoop();
   }
 
   animate(draw, ms = 500) {
@@ -33,11 +68,11 @@ class Animation {
     return function* (shouldPause) {
       while (!done && (shouldPause && !shouldPause())) {
         const next = generator.next();
-        yield next.value;
         done = next.done;
+        yield next.value;
       }
 
-      return generator.return();
+      return;
     }
   }
 }

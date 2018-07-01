@@ -4,7 +4,7 @@ canvas.width = 280;
 canvas.height = 120;
 var context = canvas.getContext('2d');
 
-var { animate, clear, generate } = new Animation(canvas);
+var { animate, animateWithGenerator, clear, generate } = new Animation(canvas);
 var egg = new Egg(canvas);
 var tamagotchi = new Tamagotchi(canvas);
 

@@ -1,4 +1,4 @@
-const coroutine = function(generatorFunction, pause) {
+const coroutine = function(generatorFunction) {
   const generator = generatorFunction();
   console.log(generator);
   next();
@@ -7,10 +7,10 @@ const coroutine = function(generatorFunction, pause) {
   function next(value, isError) {
     const response = isError ?
       generator.throw(value) : generator.next(value);
-      console.log(generator, response, pause);
-    if (response.done || pause) {
-      console.log('return', generator);
-      return generator.return();
+      console.log(generator, response);
+
+    if (response.done) {
+      return;
     }
 
     handleAsync(response.value);
@@ -30,7 +30,6 @@ const coroutine = function(generatorFunction, pause) {
       console.log('timeout');
       setTimeout(next, 0);
     } else {
-      // console.log('error');
       next(new Error(`Invalid yield ${async}`), true);
     }
   }
@@ -48,9 +47,3 @@ const coroutine = function(generatorFunction, pause) {
     });
   }
 };
-
-// coroutine(function* () {
-//   while(true) {
-//     yield queue.shift();
-//   }
-// });
