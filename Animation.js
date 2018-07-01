@@ -25,4 +25,13 @@ class Animation {
   clear() {
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
+
+  generate(actions) {
+    return function* (shouldPause) {
+      while (!shouldPause() && actions.length) {
+        var action = actions.shift();
+        yield action();
+      }
+    }
+  }
 }

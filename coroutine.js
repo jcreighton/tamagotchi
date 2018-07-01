@@ -7,8 +7,9 @@ const coroutine = function(generatorFunction, pause) {
   function next(value, isError) {
     const response = isError ?
       generator.throw(value) : generator.next(value);
-      console.log(generator, response, pause());
-    if (response.done || pause()) {
+      console.log(generator, response, pause);
+    if (response.done || pause) {
+      console.log('return', generator);
       return generator.return();
     }
 
@@ -22,14 +23,11 @@ const coroutine = function(generatorFunction, pause) {
     } else if ((async && async.constructor && async.constructor.name) === 'GeneratorFunction') {
       handleThunk(async);
     } else if (typeof async === 'function') {
-      console.log('async', async);
-      // const generate = function* () {
-      //   yield async();
-      // }
-
-      // handleAsync(generate());
+      console.log('function');
+      var v = async();
+      next(v);
     } else if (async === undefined) {
-      // console.log('timeout');
+      console.log('timeout');
       setTimeout(next, 0);
     } else {
       // console.log('error');

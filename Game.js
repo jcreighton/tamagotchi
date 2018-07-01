@@ -27,14 +27,15 @@ var timeActionHandled;
 // }
 
 function* loop() {
-  while (true) {
+  while (true) { // While game is active
     if (isPending()) {
       var action = pendingActions.shift();
       yield action();
+      yield tamagotchi.reset;
     }
 
-    const idle = tamagotchi.idle();
-    yield* idle(isPending); // How do we pause this?
+    const idle = tamagotchi.idle(); // Grab latest action from Tamagotchi
+    yield* idle(isPending);
   }
 }
 
@@ -43,7 +44,7 @@ function isPending() {
 }
 
 function startLoop() {
-  coroutine(loop, isPending);
+  coroutine(loop);
 }
 
 function feed() {

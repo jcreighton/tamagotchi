@@ -22,6 +22,9 @@ class Tamagotchi {
       move: 3,
     };
 
+    this.initialPositionX = (canvas.width / 2) - (this.sprite.frameWidth / 2);
+    this.initialPositionY = 0;
+
     this.positionX = (canvas.width / 2) - (this.sprite.frameWidth / 2);
     this.positionY = 0;
     this.ms = 300;
@@ -29,6 +32,7 @@ class Tamagotchi {
     this.eatCount = 0;
     this.maxEat = 10;
 
+    this.reset = this.reset.bind(this);
     this.idle = this.idle.bind(this);
     this.dislike = this.dislike.bind(this);
     this.eat = this.eat.bind(this);
@@ -36,6 +40,13 @@ class Tamagotchi {
     this.moveRight = this.move.bind(this, this.animation.move, 'right', 40);
     this.moveLeft = this.move.bind(this, this.animation.move, 'left', 40);
     this.bounce = this.bounce.bind(this);
+  }
+
+  reset() {
+    this.positionX = this.initialPositionX;
+    this.positionY = this.initialPositionY;
+
+    // Draw tamagotchi?
   }
 
   idle() {
