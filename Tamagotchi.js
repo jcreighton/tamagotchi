@@ -30,7 +30,7 @@ class Tamagotchi {
     this.ms = 300;
 
     this.eatLevel = 0;
-    this.maxEatLevel = 3;
+    this.maxEatLevel = 1;
 
     this.reset = this.reset.bind(this);
     this.drawFrame = this.drawFrame.bind(this);
@@ -84,16 +84,11 @@ class Tamagotchi {
   }
 
   feed() {
-    var {
-      eatLevel,
-      maxEatLevel,
-    } = this;
-    console.log('EATEN: ', this.eatLevel);
-    if (this.eatLevel === maxEatLevel) {
+    if (this.eatLevel === this.maxEatLevel) {
       return dislike.bind(this);
     }
 
-    eatLevel += 1;
+    this.eatLevel++;
     return eat.bind(this);
 
     function* eat() {
@@ -101,7 +96,7 @@ class Tamagotchi {
     };
 
     function* dislike() {
-      yield* this.eat(3);
+      yield* this.dislike(3);
     };
   }
 
