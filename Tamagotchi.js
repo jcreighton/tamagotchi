@@ -88,94 +88,54 @@ class Tamagotchi {
     // If yes, dislike()
   }
 
-  poop() {
-    // If eatCount === maxEat
-    // poop()
-    // decrement eatCount
-  }
-
   dislike() {
-    const {
-      image,
-      frameCount,
-      frameHeight,
-      frameWidth,
-    } = this.sprite;
+    const { drawFrame } = this;
 
-    const {
-      animation,
-    } = this;
-
-    var currentFrame = 0;
-    var increment = 1;
-
-    return animate((resolve) => {
-      context.drawImage(image, currentFrame * frameWidth, animation.dislike * frameHeight, frameWidth, frameHeight, this.positionX, 0, frameWidth, frameHeight);
-
-      if (currentFrame === 1) {
-        resolve();
-        return true;
-      }
-
-      currentFrame += increment;
-    }, this.ms);
+    return animateWithGenerator(
+      function* () {
+        yield drawFrame('dislike', 0);
+        yield drawFrame('dislike', 1);
+      },
+      this.ms
+    );
   }
 
   eat() {
-    const {
-      image,
-      frameCount,
-      frameHeight,
-      frameWidth,
-    } = this.sprite;
+    const { drawFrame } = this;
 
-    const {
-      animation,
-    } = this;
-
-    var currentFrame = 0;
-    var increment = 1;
-
-    return animate((resolve) => {
-      context.drawImage(image, currentFrame * frameWidth, animation.eat * frameHeight, frameWidth, frameHeight, this.positionX, 0, frameWidth, frameHeight);
-
-      if (currentFrame === 1) {
-        resolve();
-        return true;
-      }
-
-      currentFrame += increment;
-    }, this.ms);
+    return animateWithGenerator(
+      function* () {
+        yield drawFrame('eat', 0);
+        yield drawFrame('eat', 1);
+      },
+      this.ms
+    );
   }
 
   jump() {
-    const {
-      image,
-      frameCount,
-      frameHeight,
-      frameWidth,
-    } = this.sprite;
+    const { drawFrame } = this;
 
-    const {
-      animation,
-    } = this;
-
-    var currentFrame = 0;
-    var increment = 1;
-
-    return animate((resolve) => {
-      context.drawImage(image, currentFrame * frameWidth, animation.jump * frameHeight, frameWidth, frameHeight, this.positionX, 0, frameWidth, frameHeight);
-
-      if (currentFrame === 1) {
-        resolve();
-        return true;
-      }
-
-      currentFrame += increment;
-    }, this.ms);
+    return animateWithGenerator(
+      function* () {
+        yield drawFrame('jump', 0);
+        yield drawFrame('jump', 1);
+      },
+      this.ms
+    );
   }
 
   move(animation, direction = 'right', moveXBy = 0, moveYBy = 0) {
+    // const { drawFrame } = this;
+
+    // return animateWithGenerator(
+    //   function* () {
+    //     yield drawFrame('eat', 0);
+    //     yield drawFrame('eat', 1);
+    //   },
+    //   this.ms
+    // );
+
+
     const {
       image,
       frameCount,

@@ -35,11 +35,11 @@ class Game {
     } = this;
 
     return function* loop() {
-      while (true) {
+      while (game.started) {
         if (isPending()) {
           const event = userEvents.shift();
           yield tamagotchi.reset;
-          yield event();
+          yield* event();
         }
 
         // Grab latest action from Tamagotchi
