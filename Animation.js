@@ -26,12 +26,18 @@ class Animation {
     context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  generate(actions) {
+  generate(genFunc) {
+    const generator = genFunc();
+    let done = false;
+
     return function* (shouldPause) {
-      while (!shouldPause() && actions.length) {
-        var action = actions.shift();
-        yield action();
+      while (!done && (shouldPause && !shouldPause())) {
+        const next = generator.next();
+        yield next.value;
+        done = next.done;
       }
+
+      return generator.return();
     }
   }
 }

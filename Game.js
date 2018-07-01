@@ -4,7 +4,7 @@ canvas.width = 280;
 canvas.height = 120;
 var context = canvas.getContext('2d');
 
-var { animate, clear } = new Animation(canvas);
+var { animate, clear, generate } = new Animation(canvas);
 var egg = new Egg(canvas);
 var tamagotchi = new Tamagotchi(canvas);
 
@@ -29,12 +29,13 @@ var timeActionHandled;
 function* loop() {
   while (true) { // While game is active
     if (isPending()) {
-      var action = pendingActions.shift();
-      yield action();
+      const action = pendingActions.shift();
       yield tamagotchi.reset;
+      yield action();
     }
 
-    const idle = tamagotchi.idle(); // Grab latest action from Tamagotchi
+    // Grab latest action from Tamagotchi
+    const idle = generate(tamagotchi.idle());
     yield* idle(isPending);
   }
 }
