@@ -41,6 +41,9 @@ class Game {
     } = this;
 
     return function* loop() {
+      let idle = tamagotchi.idle();
+      let done = false;
+
       while (game.started) {
         if (isPending()) {
           const event = userEvents.shift();
@@ -48,9 +51,14 @@ class Game {
           yield* event();
         }
 
-        // Grab latest action from Tamagotchi
-        const idle = generate(tamagotchi.idle());
-        yield* idle(isPending);
+        while (!done && !isPending()) {
+          const next = idle.next();
+          done = next.done;
+          yield next.value;
+        }
+
+        idle = tamagotchi.idle();
+        done = false;
       }
     }
   }

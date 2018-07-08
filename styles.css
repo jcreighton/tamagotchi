@@ -1,5 +1,17 @@
-.body {
+body {
+  display: flex;
+  justify-content: center;
   font-family: 'VT323', monospace;
+  background-color: #232980;
+}
+
+.game {
+  position: relative;
+  padding-top: 60px;
+}
+
+.game__body {
+  position: relative;
 }
 
 .game__body svg {
@@ -9,8 +21,8 @@
 
 .controls {
   position: absolute;
-  top: 667px;
-  left: 308px;
+  top: 718px;
+  left: 297px;
 }
 
 .controls__button {
@@ -37,8 +49,8 @@
 
 .game__screen {
   position: absolute;
-  top: 308px;
-  left: 268px;
+  top: 360px;
+  left: 260px;
   background: #efefef;
   width: 280px;
   height: 280px;
