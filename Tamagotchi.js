@@ -1,184 +1,119 @@
-class Tamagotchi {
+class Tamagotchi extends Animatable {
   constructor(canvas) {
+    super(canvas);
+
     const idle = new Sprite('images/Idle.png', 360, 120, 3, 1);
     const eat = new Sprite('images/Eat.png', 640, 240, 4, 2);
+    const other = new Sprite('images/Other.png', 240, 360, 2, 3);
 
-    this.animation = {
-      // dislike: 0,
-      // jump: 1,
-      eatBurger: eat.get(0),
-      eatCandy: eat.get(1),
+    this.animations = {
+      dislike: other.get(2),
+      jumpRight: other.get(0),
+      jumpLeft: other.get(1),
+      burger: eat.get(1),
+      candy: eat.get(0),
       bounce: idle.get(),
-      move: idle.get(),
     };
 
-    this.initialPositionX = (canvas.width / 2) - (120 / 2);
-    this.initialPositionY = 0;
-
-    this.positionX = (canvas.width / 2) - (120 / 2);
-    this.positionY = 0;
-    this.ms = 300;
-
     this.eatLevel = 0;
-    this.maxEatLevel = 1;
+    this.maxEatLevel = 3;
 
-    this.reset = this.reset.bind(this);
-    this.drawFrame = this.drawFrame.bind(this);
     this.idle = this.idle.bind(this);
-    // this.feed = this.feed.bind(this);
-    // this.dislike = this.dislike.bind(this);
-    // this.eat = this.eat.bind(this);
-    // this.jump = this.jump.bind(this);
-    // this.move = this.move.bind(this);
+    this.feed = this.feed.bind(this);
+    this.dislike = this.dislike.bind(this);
+    this.eat = this.eat.bind(this);
+    this.jump = this.jump.bind(this);
+    this.frame = this.frame.bind(this);
+    this.move = this.move.bind(this);
     this.bounce = this.bounce.bind(this);
   }
 
-  reset() {
-    this.positionX = this.initialPositionX;
-    this.positionY = this.initialPositionY;
-  }
-
-  delay(ms) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, ms);
-    });
-  }
-
-  drawFrame(
-    image,
-    frame = [0, 0],
-    width,
-    height,
-    ms = 300,
-    positionX = this.positionX,
-    positionY = this.positionY
-  ) {
-    const promise = (draw, ms) => {
-      return new Promise((resolve, reject) => {
-
-        const animation = () => {
-          clear();
-          draw();
-          resolve();
-        }
-
-        setTimeout(() => {
-          requestAnimationFrame(animation);
-        }, ms);
-      });
-    }
-
-    return promise(() => context.drawImage(image,
-      ...frame,
-      width, height,
-      positionX, positionY,
-      width, height), ms);
-  }
-
   idle() {
+    const {
+      bounce,
+    } = this;
+    const move = this.move('bounce', 0);
+
     function* animation() {
-      yield* this.bounce();
-      // yield* this.move('right', 50);
-      // yield* this.move('left', 100);
-      yield* this.bounce();
-      // yield* this.move('right', 50);
+      // yield* this.jump('right');
+      // yield* move('left', 25);
+      // yield* this.jump('left');
+      // yield* move('right', 25);
+      yield* bounce();
+      yield* move('right', 25);
+      yield* move('left', 50);
+      yield* bounce();
+      yield* move('right', 25);
     };
 
     return animation.call(this);
   }
 
-  feed() {
+  feed(food) {
     const {
       delay,
+      eat,
     } = this;
 
-    function* feed() {
+    function* animation() {
       if (this.eatLevel === this.maxEatLevel) {
-        yield* this.dislike(3);
+        yield* this.dislike();
       } else {
         this.eatLevel++;
-        yield* this.eat(3);
+        yield* eat(food);
       }
 
       yield delay(300);
     }
 
-    feed = feed.bind(this);
-
-    return feed();
+    return animation.call(this);
   }
 
   dislike() {
-    const { drawFrame } = this;
+    const frame = this.frame('dislike');
 
-    function* dislike() {
-      yield drawFrame('dislike', 0);
-      yield drawFrame('dislike', 1);
+    function* animation() {
+      yield* frame(0);
+      yield* frame(1);
     };
 
-    return dislike();
+    return animation.call(this);;
   }
 
-  eat(max) {
-    const { drawFrame } = this;
+  eat(food) {
+    const frame = this.frame(food);
 
-    function* eat() {
-      while (max > 0) {
-        yield drawFrame('eat', 0);
-        yield drawFrame('eat', 1);
-        max--;
-      }
+    function* animation() {
+        yield* frame(0);
+        yield* frame(1);
+        yield* frame(2);
+        yield* frame(3);
     };
 
-    return eat();
+    return animation.call(this);
   }
 
-  // jump() {
-  //   const { drawFrame } = this;
+  jump(direction) {
+    const { delay } = this;
+    const jumpTo = `jump${capitalize(direction)}`;
+    const move = this.move(jumpTo, 0);
+    const frame = this.frame(jumpTo);
 
-  //   function* jump() {
-  //     yield drawFrame('jump', 0);
-  //     yield drawFrame('jump', 1);
-  //   };
-
-  //   return jump();
-  // }
-
-  move(direction, moveXBy = 0, moveYBy = 0) {
-    var moveTo = {
-      right: 1,
-      left: -1,
-      up: 1,
-      down: -1,
+    function* animation() {
+      yield* move(`${direction}.up`, 30, 40, 40);
+      yield* move('down', undefined, 30, 20);
+      yield* frame(1);
+      yield delay(300);
     };
 
-    const { drawFrame } = this;
+    return animation.call(this);
+  }
 
-    var currentFrame = 0;
-    var ms = 20;
-    var increment = moveTo[direction];
-    var x = this.positionX;
-    var y = this.positionY;
-    var boundaryX = x + (moveXBy * increment);
-    var boundaryY = y + (moveYBy * increment);
+  move(action, frame) {
+    let draw = this.frame(action);
+    draw = draw.bind(null, frame);
 
-    function* move() {
-      while (true) {
-        if (this.positionX === boundaryX && this.positionY === boundaryY) {
-          return;
-        }
-
-        yield drawFrame('move', currentFrame, ms, this.positionX, this.positionY);
-
-        if (moveXBy) this.positionX += increment;
-        if (moveYBy) this.positionY += increment;
-      }
-    }
-
-    move = move.bind(this);
-    return move();
+    return (direction, x, y, ms) => this.moveImage(draw, direction, x, y, ms);
   }
 
   frame(action) {
@@ -187,24 +122,24 @@ class Tamagotchi {
       frames,
       frameWidth,
       frameHeight,
-    } = this.animation[action];
+    } = this.animations[action];
 
-    return frame => {
-      return this.drawFrame(image, frames[frame], frameWidth, frameHeight);
+    return (frame, ...args) => {
+      return this.drawFrame(image, frames[frame], frameWidth, frameHeight, ...args);
     }
   }
 
   bounce() {
-    const frame = this.frame(bounce.name);
+    const frame = this.frame('bounce');
 
-    function* bounce() {
-      yield frame(0);
-      yield frame(1);
-      yield frame(2);
-      yield frame(1);
-      yield frame(0);
+    function* animation() {
+      yield* frame(0);
+      yield* frame(1);
+      yield* frame(2);
+      yield* frame(1);
+      yield* frame(0);
     };
 
-    return bounce();
+    return animation.call(this);
   }
 }

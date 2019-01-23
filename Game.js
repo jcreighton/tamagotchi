@@ -2,7 +2,7 @@ var gameScreen = document.querySelector('.game__screen');
 var gameOptions = document.querySelector('.game__options');
 var canvas = document.querySelector('.animation');
 canvas.width = 280;
-canvas.height = 120;
+canvas.height = 280;
 var context = canvas.getContext('2d');
 
 class Game {
@@ -47,6 +47,7 @@ class Game {
       while (game.started) {
         if (isPending()) {
           const event = userEvents.shift();
+          idle.return();
           yield tamagotchi.reset;
           yield* event();
         }
@@ -67,9 +68,17 @@ class Game {
     this.optionsVisible = true;
     const options = gameOptions.children;
     options.item(0).innerText = 'Feed';
-    options.item(0).onclick = () => feed();
+    options.item(0).onclick = () => this.showFoodOptions();
     options.item(1).innerText = 'Play';
     gameOptions.classList.add('visible');
+  }
+
+  showFoodOptions() {
+    const options = gameOptions.children;
+    options.item(0).innerText = 'Burger';
+    options.item(0).onclick = () => feed('burger');
+    options.item(1).innerText = 'Candy';
+    options.item(1).onclick = () => feed('candy');
   }
 
   hideOptions() {
@@ -78,7 +87,7 @@ class Game {
   }
 }
 
-var { animate, animateWithGenerator, clear, generate } = new Animation(canvas);
+var { animate, clear } = new Animation(canvas);
 var egg = new Egg(canvas);
 var tamagotchi = new Tamagotchi(canvas);
 var game = new Game();
@@ -87,9 +96,9 @@ var buttonA = document.querySelector('.a');
 var buttonB = document.querySelector('.b');
 var buttonC = document.querySelector('.c');
 
-function feed() {
+function feed(food) {
   if (game.started) {
-    game.userEvents.push(tamagotchi.feed);
+    game.userEvents.push(tamagotchi.feed.bind(null, food));
     game.hideOptions();
   }
 }
