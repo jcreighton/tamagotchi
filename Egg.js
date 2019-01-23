@@ -7,7 +7,7 @@ class Egg {
       frameCount: 5,
     };
 
-    this.sprite.image.src = 'images/EggSprite.png';
+    this.sprite.image.src = 'images/Egg.png';
 
     this.sprite.frameWidth = this.sprite.width / this.sprite.frameCount;
     this.sprite.frameHeight = 120;

@@ -89,7 +89,7 @@ var buttonC = document.querySelector('.c');
 
 function feed() {
   if (game.started) {
-    game.userEvents.push(tamagotchi.feed());
+    game.userEvents.push(tamagotchi.feed);
     game.hideOptions();
   }
 }
