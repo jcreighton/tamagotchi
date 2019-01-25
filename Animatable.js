@@ -1,17 +1,24 @@
 class Animatable {
-  constructor(canvas) {
-    this.initialPositionX = this.center(canvas.width, 120);
-    this.initialPositionY = canvas.height - 120;
+  constructor(canvas, standardFrameWidth = 120, standardFrameHeight = 120, ms = 300) {
+    const context = canvas.getContext('2d');
+    this.standardFrameWidth = standardFrameWidth;
+    this.initialPositionX = this.center(canvas.width, standardFrameWidth);
+    this.initialPositionY = canvas.height - standardFrameHeight;
 
     this.positionX = this.initialPositionX;
     this.positionY = this.initialPositionY;
-    this.ms = 300;
+    this.ms = ms;
 
+    this.clear = this.clear.bind(this, context, canvas.width, canvas.height);
     this.center = this.center.bind(this);
     this.delay = this.delay.bind(this);
     this.reset = this.reset.bind(this);
-    this.drawFrame = this.drawFrame.bind(this);
+    this.drawFrame = this.drawFrame.bind(this, context);
     this.moveImage = this.moveImage.bind(this);
+  }
+
+  clear(context, canvasWidth, canvasHeight) {
+    context.clearRect(0, 0, canvasWidth, canvasHeight);
   }
 
   center(canvasWidth, frameWidth) {
@@ -27,6 +34,7 @@ class Animatable {
   }
 
   drawFrame(
+    context,
     image,
     frame = [0, 0],
     width,
@@ -35,7 +43,10 @@ class Animatable {
     positionX = this.positionX,
     positionY = this.positionY,
   ) {
-    const { delay } = this;
+    const {
+      clear,
+      delay,
+    } = this;
 
     const draw = () => requestAnimationFrame(() => {
       context.drawImage(image,
@@ -104,6 +115,26 @@ class Animatable {
     }
 
     return animation.call(this);
+  }
+
+  move(action, frame) {
+    let draw = this.frame(this.animations[action]);
+    draw = draw.bind(null, frame);
+
+    return (direction, x, y, ms) => this.moveImage(draw, direction, x, y, ms);
+  }
+
+  frame(animation) {
+    const {
+      image,
+      frames,
+      frameWidth,
+      frameHeight,
+    } = animation;
+
+    return (frame, ...args) => {
+      return this.drawFrame(image, frames[frame], frameWidth, frameHeight, ...args);
+    }
   }
 
   reset() {

@@ -3,10 +3,18 @@ var gameOptions = document.querySelector('.game__options');
 var canvas = document.querySelector('.animation');
 canvas.width = 280;
 canvas.height = 280;
-var context = canvas.getContext('2d');
 
 class Game {
-  constructor() {
+  constructor(canvas) {
+    const context = canvas.getContext('2d');
+    context.font = '120px VT323';
+    context.fillText('Start', 20, 170);
+    context.beginPath();
+    context.moveTo(145, 260);
+    context.lineTo(100, 200);
+    context.lineTo(200, 200);
+    context.fill();
+
     this.started = false;
     this.optionsVisible = false;
     this.userEvents = [];
@@ -20,10 +28,13 @@ class Game {
   }
 
   start() {
-    this.started = true;
-    this.startLoop();
-    // coroutine(egg.hatch())
-    //   .then(this.startLoop);
+    coroutine(function* () {
+      yield* egg.hatch();
+      yield egg.delay(500);
+    }).then(() => {
+      this.started = true;
+      this.startLoop();
+    });
   }
 
   isPending() {
@@ -87,10 +98,9 @@ class Game {
   }
 }
 
-var { animate, clear } = new Animation(canvas);
 var egg = new Egg(canvas);
 var tamagotchi = new Tamagotchi(canvas);
-var game = new Game();
+var game = new Game(canvas);
 
 var buttonA = document.querySelector('.a');
 var buttonB = document.querySelector('.b');

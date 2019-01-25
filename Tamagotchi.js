@@ -70,7 +70,7 @@ class Tamagotchi extends Animatable {
   }
 
   dislike() {
-    const frame = this.frame('dislike');
+    const frame = this.frame(this.animations.dislike);
 
     function* animation() {
       yield* frame(0);
@@ -97,7 +97,7 @@ class Tamagotchi extends Animatable {
     const { delay } = this;
     const jumpTo = `jump${capitalize(direction)}`;
     const move = this.move(jumpTo, 0);
-    const frame = this.frame(jumpTo);
+    const frame = this.frame(this.animations[jumpTo]);
 
     function* animation() {
       yield* move(`${direction}.up`, 30, 40, 40);
@@ -109,28 +109,8 @@ class Tamagotchi extends Animatable {
     return animation.call(this);
   }
 
-  move(action, frame) {
-    let draw = this.frame(action);
-    draw = draw.bind(null, frame);
-
-    return (direction, x, y, ms) => this.moveImage(draw, direction, x, y, ms);
-  }
-
-  frame(action) {
-    const {
-      image,
-      frames,
-      frameWidth,
-      frameHeight,
-    } = this.animations[action];
-
-    return (frame, ...args) => {
-      return this.drawFrame(image, frames[frame], frameWidth, frameHeight, ...args);
-    }
-  }
-
   bounce() {
-    const frame = this.frame('bounce');
+    const frame = this.frame(this.animations.bounce);
 
     function* animation() {
       yield* frame(0);

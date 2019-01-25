@@ -1,6 +1,9 @@
 const coroutine = function(generatorFunction) {
+  const promise = defer();
   const generator = generatorFunction();
   next();
+
+  return promise;
 
   // Call next() or throw() on the generator as necessary
   function next(value, isError) {
@@ -8,7 +11,7 @@ const coroutine = function(generatorFunction) {
       generator.throw(value) : generator.next(value);
 
     if (response.done) {
-      return response;
+      return promise.resolve(response);
     }
 
     handleAsync(response.value);

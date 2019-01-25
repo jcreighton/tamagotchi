@@ -3,6 +3,9 @@ function capitalize(word) {
 }
 
 function defer() {
+  let res;
+  let rej;
+
   const promise = new Promise((resolve, reject) => {
     res = resolve;
     rej = reject;
