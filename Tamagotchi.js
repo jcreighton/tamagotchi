@@ -81,7 +81,7 @@ class Tamagotchi extends Animatable {
   }
 
   eat(food) {
-    const frame = this.frame(food);
+    const frame = this.frame(this.animations[food]);
 
     function* animation() {
         yield* frame(0);
